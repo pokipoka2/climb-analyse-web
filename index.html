@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Suivi de séances d’escalade</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Suivi de séances d’escalade</h1>
+  </header>
+
+  <main>
+    <!-- Saisie -->
+    <section class="card" id="add-session-card">
+      <h2>Ajouter une séance</h2>
+      <form id="session-form">
+        <div class="form-row">
+          <label for="date">Date</label>
+          <input type="date" id="date" required>
+        </div>
+
+        <div class="form-row">
+          <label for="type">Type</label>
+          <select id="type" required>
+            <option value="Bloc">Bloc</option>
+            <option value="Voie">Voie</option>
+            <option value="Poutre">Poutre</option>
+            <option value="Tractions">Tractions</option>
+            <option value="Autre">Autre</option>
+          </select>
+        </div>
+
+        <div class="form-row" id="bloc-color-row">
+          <label for="blocColor">Cotation (couleur bloc)</label>
+          <select id="blocColor">
+            <option value="">-- Choisir --</option>
+            <option value="Jaune">Jaune</option>
+            <option value="Vert">Vert</option>
+            <option value="Bleu">Bleu</option>
+            <option value="Violet">Violet</option>
+            <option value="Rouge">Rouge</option>
+            <option value="Noir">Noir</option>
+            <option value="Blanc">Blanc</option>
+          </select>
+        </div>
+
+        <div class="form-row" id="voie-grade-row">
+          <label for="voieGrade">Cotation (texte libre)</label>
+          <input type="text" id="voieGrade" placeholder="ex : 5c, 6a+">
+        </div>
+
+        <div class="form-row">
+          <label for="count">Nombre de blocs/voies réussis</label>
+          <input type="number" id="count" min="0" value="0">
+        </div>
+
+        <div class="form-row">
+          <label for="attempts">Essais moyens par bloc/voie</label>
+          <input type="number" id="attempts" min="0" step="0.1" value="1">
+        </div>
+
+        <div class="form-row">
+          <label for="duration">Durée (minutes)</label>
+          <input type="number" id="duration" min="0" value="60">
+        </div>
+
+        <div class="form-row">
+          <label for="feeling">Sensation globale</label>
+          <select id="feeling">
+            <option value="Très facile">Très facile</option>
+            <option value="Facile">Facile</option>
+            <option value="Moyen">Moyen</option>
+            <option value="Dur">Dur</option>
+            <option value="À fond">À fond</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label for="notes">Notes</label>
+          <textarea id="notes" rows="3" placeholder="Fatigue, douleurs doigts/coudes/épaules, sommeil, etc."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit">Ajouter la séance</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Historique -->
+    <section class="card" id="history-card">
+      <h2>Historique des séances</h2>
+
+      <div class="filters">
+        <div class="form-row">
+          <label for="filter-type">Filtrer par type</label>
+          <select id="filter-type">
+            <option value="Tout">Tout</option>
+            <option value="Bloc">Bloc</option>
+            <option value="Voie">Voie</option>
+            <option value="Poutre">Poutre</option>
+            <option value="Tractions">Tractions</option>
+            <option value="Autre">Autre</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label for="filter-period">Période</label>
+          <select id="filter-period">
+            <option value="all">Tout</option>
+            <option value="7">7 derniers jours</option>
+            <option value="30">30 derniers jours</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <button id="clear-data" type="button" class="danger">Effacer toutes les données</button>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table id="sessions-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Cotation</th>
+              <th>Volume</th>
+              <th>Durée (min)</th>
+              <th>Sensation</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rempli par JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Statistiques -->
+    <section class="card" id="stats-card">
+      <h2>Statistiques</h2>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <p>Séances sur 7 jours : <span id="sessions-7">0</span></p>
+          <p>Séances sur 30 jours : <span id="sessions-30">0</span></p>
+        </div>
+        <div class="stat-item">
+          <p>Volume blocs/voies sur 7 jours : <span id="volume-7">0</span></p>
+          <p>Volume blocs/voies sur 30 jours : <span id="volume-30">0</span></p>
+        </div>
+        <div class="stat-item">
+          <p>Tu grimpes surtout : <span id="main-type">N/A</span></p>
+          <p>Répartition des types : <span id="types-distribution">N/A</span></p>
+        </div>
+        <div class="stat-item">
+          <p>Tu es à fond <span id="full-send-7">0</span> % du temps (7 jours)</p>
+          <p>Répartition des sensations : <span id="feelings-distribution">N/A</span></p>
+        </div>
+        <div class="stat-item">
+          <p id="difficulty-summary">Niveau dominant : N/A</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Conseils -->
+    <section class="card" id="advice-card">
+      <h2>Conseils d’entraînement</h2>
+      <ul id="advice-list">
+        <!-- Rempli par JS -->
+      </ul>
+    </section>
+
+    <!-- Résumé IA -->
+    <section class="card" id="ai-summary-card">
+      <h2>Résumé pour IA (Perplexity)</h2>
+      <p>Résumé automatique des 14 derniers jours, prêt à copier-coller.</p>
+      <textarea id="ai-summary" rows="6" readonly></textarea>
+      <div class="form-actions">
+        <button type="button" id="copy-summary">Copier le résumé</button>
+      </div>
+      <p id="copy-feedback" class="small-text"></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Outil local, données stockées dans ton navigateur.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
